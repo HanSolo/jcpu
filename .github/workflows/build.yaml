@@ -1,0 +1,66 @@
+name: build
+
+on: [push, pull_request]
+
+jobs:
+  build-windows:
+
+    runs-on: [ windows-latest ]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 17.0.5
+        uses: foojayio/setup-java@disco
+        with:
+          java-version: 17.0.5
+          architecture: x64
+      - name: Build with Gradle
+        run: .\gradlew.bat
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Jcpu Windows x64
+          path: '.\build\lib\jcpu-17.0.0.jar'
+
+
+
+  build-mac:
+
+    runs-on: [ macos-latest ]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 17.0.5
+        uses: foojayio/setup-java@disco
+        with:
+          java-version: 17.0.5
+          architecture: x64
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew build
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Jcpu Mac x64
+          path: |
+            ./build/libs/jcpu-17.0.0.jar
+
+  build-linux:
+
+    runs-on: [ ubuntu-latest ]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 17.0.5
+        uses: foojayio/setup-java@disco
+        with:
+          java-version: 17.0.5
+          architecture: x64
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew build
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Jcpu Linux x64
+          path: |            
+            ./build/libs/jcpu-17.0.0.jar
