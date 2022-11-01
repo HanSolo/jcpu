@@ -15,7 +15,7 @@ jobs:
           java-version: 17.0.5
           architecture: x64
       - name: Build with Gradle
-        run: .\gradlew.bat
+        run: ./gradlew.bat
       - uses: actions/upload-artifact@v3
         with:
           name: Jcpu Windows x64
