@@ -19,7 +19,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: Jcpu Windows x64
-          path: '.\build\lib\jcpu-17.0.0.jar'
+          path: '.\build\libs\jcpu-17.0.0.jar'
 
 
 
