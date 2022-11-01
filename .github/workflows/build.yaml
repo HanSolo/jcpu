@@ -8,7 +8,7 @@ jobs:
     runs-on: [ windows-latest ]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK 17.0.5
         uses: foojayio/setup-java@disco
         with:
@@ -19,7 +19,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: Jcpu Windows x64
-          path: build/libs
+          path: build\libs
 
 
   build-mac:
@@ -27,7 +27,7 @@ jobs:
     runs-on: [ macos-latest ]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK 17.0.5
         uses: foojayio/setup-java@disco
         with:
@@ -47,7 +47,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK 17.0.5
         uses: foojayio/setup-java@disco
         with:
