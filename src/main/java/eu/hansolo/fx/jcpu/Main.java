@@ -28,9 +28,9 @@ public class Main extends Application {
                           .infoColor(Color.WHITE)
                           .titleTextAlignment(TextAlignment.LEFT)
                           .infoTextAlignment(TextAlignment.LEFT)
-                          .value1Color(Color.rgb(0, 150, 150))
-                          .value2Color(Color.rgb(50, 150, 0))
-                          .value3Color(Color.rgb(150, 0, 0))
+                          .value1Color(Color.rgb(0, 200, 200))
+                          .value2Color(Color.rgb(100, 200, 0))
+                          .value3Color(Color.rgb(200, 0, 0))
                           .value1TextColor(Constants.DEFAULT_UNIT_VALUE_COLOR)
                           .value2TextColor(Constants.DEFAULT_UNIT_VALUE_COLOR)
                           .value3TextColor(Constants.DEFAULT_UNIT_VALUE_COLOR)
@@ -50,6 +50,24 @@ public class Main extends Application {
                           .nameValue3("TEMP")
                           .formatStringValue3("%.0f%%")
                           .build();
+
+        jcpu.compressedProperty().addListener((o, ov, nv) -> {
+            if (nv) {
+                jcpu.setValue1Color(Color.rgb(0, 150, 150));
+                jcpu.setValue2Color(Color.rgb(50, 150, 0));
+                jcpu.setValue3Color(Color.rgb(150, 0, 0));
+                jcpu.setValue1TextColor(Color.WHITE);
+                jcpu.setValue2TextColor(Color.WHITE);
+                jcpu.setValue3TextColor(Color.WHITE);
+            } else {
+                jcpu.setValue1Color(Color.rgb(0, 200, 200));
+                jcpu.setValue2Color(Color.rgb(100, 200, 0));
+                jcpu.setValue3Color(Color.rgb(200, 0, 0));
+                jcpu.setValue1TextColor(Constants.DEFAULT_UNIT_VALUE_COLOR);
+                jcpu.setValue2TextColor(Constants.DEFAULT_UNIT_VALUE_COLOR);
+                jcpu.setValue3TextColor(Constants.DEFAULT_UNIT_VALUE_COLOR);
+            }
+        });
 
         lastTimerCall = System.nanoTime();
         timer = new AnimationTimer() {

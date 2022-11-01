@@ -4,10 +4,13 @@ import eu.hansolo.toolbox.Helper;
 import eu.hansolo.toolboxfx.font.Fonts;
 import eu.hansolo.toolboxfx.geom.Bounds;
 import javafx.beans.DefaultProperty;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.BooleanPropertyBase;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.DoublePropertyBase;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.StringPropertyBase;
 import javafx.collections.ObservableList;
@@ -41,7 +44,8 @@ public class Jcpu extends Region {
     private              double                        width;
     private              double                        height;
     private              double                        minSize;
-    private              boolean                       compressed;
+    private              boolean                       _compressed;
+    private              BooleanProperty               compressed;
     private              Canvas                        canvas;
     private              GraphicsContext               ctx;
     private              double                        insetTop;
@@ -125,6 +129,7 @@ public class Jcpu extends Region {
 
     // ******************** Constructors **************************************
     public Jcpu() {
+        _compressed         = false;
         contentBounds       = new Bounds(5, 5, PREFERRED_WIDTH - 10, PREFERRED_HEIGHT - 10);
         _backgroundColor    = Constants.DEFAULT_BACKGROUND_COLOR;
         _foregroundColor    = Constants.DEFAULT_FOREGROUND_COLOR;
@@ -197,6 +202,24 @@ public class Jcpu extends Region {
     @Override protected double computeMaxHeight(final double width)  { return MAXIMUM_HEIGHT; }
 
     @Override public ObservableList<Node> getChildren()              { return super.getChildren(); }
+
+    public boolean isCompressed() { return null == compressed ? _compressed : compressed.get(); }
+    private void setCompressed(final boolean compressed) {
+        if (null == this.compressed) {
+            _compressed = compressed;
+        } else {
+            this.compressed.set(compressed);
+        }
+    }
+    public ReadOnlyBooleanProperty compressedProperty() {
+        if (null == compressed) {
+            compressed = new BooleanPropertyBase(_compressed) {
+                @Override public Object getBean() { return Jcpu.this; }
+                @Override public String getName() { return "compressed"; }
+            };
+        }
+        return compressed;
+    }
 
     public Color getBackgroundColor() { return null == backgroundColor ? _backgroundColor : backgroundColor.get(); }
     public void setBackgroundColor(final Color backgroundColor) {
@@ -893,21 +916,21 @@ public class Jcpu extends Region {
         minSize     = width < height ? width : height;
 
         if (width > 0 && height > 0) {
-            compressed        = height < 180;
+            setCompressed(height < 180);
             insetLeft         = minSize * 0.02;
             insetRight        = minSize * 0.02;
             insetTop          = minSize * 0.1;
             insetBottom       = minSize * 0.12;
             contentBounds.set(insetLeft, insetTop, width - insetLeft - insetRight, height - insetTop - insetBottom);
             font              = Fonts.latoRegular(minSize * 0.075);
-            nameFont          = compressed ? Fonts.latoRegular(minSize * 0.15) : Fonts.latoRegular(minSize * 0.09);
-            valueUnitFont     = compressed ? Fonts.latoRegular(minSize * 0.15) : Fonts.latoRegular(minSize * 0.09);
+            nameFont          = isCompressed() ? Fonts.latoRegular(minSize * 0.15) : Fonts.latoRegular(minSize * 0.09);
+            valueUnitFont     = isCompressed() ? Fonts.latoRegular(minSize * 0.15) : Fonts.latoRegular(minSize * 0.09);
             spacer            = contentBounds.getHeight() * 0.05;
-            bkgBarHeight      = compressed ? 0 : contentBounds.getHeight() * 0.02;
-            fgdBarHeight      = compressed ? contentBounds.getHeight() * 0.3 : contentBounds.getHeight() * 0.125;
+            bkgBarHeight      = isCompressed() ? 0 : contentBounds.getHeight() * 0.02;
+            fgdBarHeight      = isCompressed() ? contentBounds.getHeight() * 0.3 : contentBounds.getHeight() * 0.125;
             areaHeight        = contentBounds.getHeight() * 0.3;
-            fgdBarPosY        = compressed ? 0 : areaHeight * 0.55;
-            bkgBarPosY        = compressed ? 0 : fgdBarPosY + (fgdBarHeight - bkgBarHeight) * 0.5;
+            fgdBarPosY        = isCompressed() ? 0 : areaHeight * 0.55;
+            bkgBarPosY        = isCompressed() ? 0 : fgdBarPosY + (fgdBarHeight - bkgBarHeight) * 0.5;
             canvas.setWidth(width);
             canvas.setHeight(height);
             canvas.relocate(getInsets().getLeft(), getInsets().getTop());
@@ -945,7 +968,7 @@ public class Jcpu extends Region {
         }
 
         // ******************** Content Area **********************************
-        if (!compressed) {
+        if (!isCompressed()) {
             // Standard view
             ctx.setTextBaseline(VPos.TOP);
             // Bar Value 1
