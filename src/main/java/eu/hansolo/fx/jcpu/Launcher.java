@@ -1,2 +1,3 @@
-package eu.hansolo.fx.jcpu;public class Launcher {
-}
+package eu.hansolo.fx.jcpu;
+
+public class Launcher { }

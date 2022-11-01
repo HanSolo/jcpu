@@ -1,4 +1,5 @@
- package eu.hansolo.fx.jcpu;
+package eu.hansolo.fx.jcpu;
+
 import javafx.beans.DefaultProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -23,7 +24,7 @@ import javafx.scene.paint.Paint;
  * Date: 01.11.22
  * Time: 06:43
  */
-@DefaultProperty("children") 
+@DefaultProperty("children")
 public class Jcpu extends Region {
     private static final double          PREFERRED_WIDTH  = 250;
     private static final double          PREFERRED_HEIGHT = 250;
@@ -43,7 +44,6 @@ public class Jcpu extends Region {
     private              Paint           backgroundPaint;
     private              Paint           borderPaint;
     private              double          borderWidth;
-    
 
 
     // ******************** Constructors **************************************
@@ -60,8 +60,7 @@ public class Jcpu extends Region {
 
     // ******************** Initialization ************************************
     private void initGraphics() {
-        if (Double.compare(getPrefWidth(), 0.0) <= 0 || Double.compare(getPrefHeight(), 0.0) <= 0 ||
-            Double.compare(getWidth(), 0.0) <= 0 || Double.compare(getHeight(), 0.0) <= 0) {
+        if (Double.compare(getPrefWidth(), 0.0) <= 0 || Double.compare(getPrefHeight(), 0.0) <= 0 || Double.compare(getWidth(), 0.0) <= 0 || Double.compare(getHeight(), 0.0) <= 0) {
             if (getPrefWidth() > 0 && getPrefHeight() > 0) {
                 setPrefSize(getPrefWidth(), getPrefHeight());
             } else {
@@ -70,8 +69,8 @@ public class Jcpu extends Region {
         }
 
         getStyleClass().add("my-region");
-        
-        pane = new Pane();                
+
+        pane = new Pane();
         pane.setBackground(new Background(new BackgroundFill(backgroundPaint, CornerRadii.EMPTY, Insets.EMPTY)));
         pane.setBorder(new Border(new BorderStroke(borderPaint, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(borderWidth))));
 
@@ -84,29 +83,29 @@ public class Jcpu extends Region {
         // add listeners to your propertes like
         //value.addListener(o -> handleControlPropertyChanged("VALUE"));
     }
-        
+
 
     // ******************** Methods *******************************************
-    @Override protected double computeMinWidth(final double height)  { return MINIMUM_WIDTH; }
+    @Override protected double computeMinWidth(final double height) { return MINIMUM_WIDTH; }
     @Override protected double computeMinHeight(final double width)  { return MINIMUM_HEIGHT; }
     @Override protected double computePrefWidth(final double height) { return super.computePrefWidth(height); }
     @Override protected double computePrefHeight(final double width) { return super.computePrefHeight(width); }
     @Override protected double computeMaxWidth(final double height)  { return MAXIMUM_WIDTH; }
     @Override protected double computeMaxHeight(final double width)  { return MAXIMUM_HEIGHT; }
-    
-    @Override public ObservableList<Node> getChildren() { return super.getChildren(); }
 
-    
+    @Override public ObservableList<Node> getChildren()              { return super.getChildren(); }
+
+
     // ******************** Layout *******************************************
     @Override public void layoutChildren() {
         super.layoutChildren();
     }
-    
+
     @Override public String getUserAgentStylesheet() {
-         if (null == userAgentStyleSheet) { userAgentStyleSheet = Jcpu.class.getResource("my-region.css").toExternalForm(); }         
-         return userAgentStyleSheet;
-     }
-    
+        if (null == userAgentStyleSheet) { userAgentStyleSheet = Jcpu.class.getResource("my-region.css").toExternalForm(); }
+        return userAgentStyleSheet;
+    }
+
     private void resize() {
         width  = getWidth() - getInsets().getLeft() - getInsets().getRight();
         height = getHeight() - getInsets().getTop() - getInsets().getBottom();
@@ -119,7 +118,7 @@ public class Jcpu extends Region {
                 height = aspectRatio * width;
             }
         }
-        
+
         if (width > 0 && height > 0) {
             // Use for square controls where width == height
             pane.setMaxSize(size, size);
@@ -130,13 +129,13 @@ public class Jcpu extends Region {
             pane.setMaxSize(width, height);
             pane.setPrefSize(width, height);
             pane.relocate((getWidth() - width) * 0.5, (getHeight() - height) * 0.5);
-            
+
 
             redraw();
         }
     }
 
-    private void redraw() {        
+    private void redraw() {
         pane.setBackground(new Background(new BackgroundFill(backgroundPaint, CornerRadii.EMPTY, Insets.EMPTY)));
         pane.setBorder(new Border(new BorderStroke(borderPaint, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(borderWidth / PREFERRED_WIDTH * size))));
     }
