@@ -41,6 +41,7 @@ public class Jcpu extends Region {
     private              double                        width;
     private              double                        height;
     private              double                        minSize;
+    private              boolean                       compressed;
     private              Canvas                        canvas;
     private              GraphicsContext               ctx;
     private              double                        insetTop;
@@ -892,20 +893,21 @@ public class Jcpu extends Region {
         minSize     = width < height ? width : height;
 
         if (width > 0 && height > 0) {
+            compressed        = height < 180;
             insetLeft         = minSize * 0.02;
             insetRight        = minSize * 0.02;
             insetTop          = minSize * 0.1;
             insetBottom       = minSize * 0.12;
             contentBounds.set(insetLeft, insetTop, width - insetLeft - insetRight, height - insetTop - insetBottom);
             font              = Fonts.latoRegular(minSize * 0.075);
-            nameFont          = Fonts.latoRegular(minSize * 0.09);
-            valueUnitFont     = Fonts.latoRegular(minSize * 0.09);
+            nameFont          = compressed ? Fonts.latoRegular(minSize * 0.15) : Fonts.latoRegular(minSize * 0.09);
+            valueUnitFont     = compressed ? Fonts.latoRegular(minSize * 0.15) : Fonts.latoRegular(minSize * 0.09);
             spacer            = contentBounds.getHeight() * 0.05;
-            bkgBarHeight      = contentBounds.getHeight() * 0.02;
-            fgdBarHeight      = contentBounds.getHeight() * 0.125;
+            bkgBarHeight      = compressed ? 0 : contentBounds.getHeight() * 0.02;
+            fgdBarHeight      = compressed ? contentBounds.getHeight() * 0.3 : contentBounds.getHeight() * 0.125;
             areaHeight        = contentBounds.getHeight() * 0.3;
-            fgdBarPosY        = areaHeight * 0.55;
-            bkgBarPosY        = fgdBarPosY + (fgdBarHeight - bkgBarHeight) * 0.5;
+            fgdBarPosY        = compressed ? 0 : areaHeight * 0.55;
+            bkgBarPosY        = compressed ? 0 : fgdBarPosY + (fgdBarHeight - bkgBarHeight) * 0.5;
             canvas.setWidth(width);
             canvas.setHeight(height);
             canvas.relocate(getInsets().getLeft(), getInsets().getTop());
@@ -943,44 +945,88 @@ public class Jcpu extends Region {
         }
 
         // ******************** Content Area **********************************
-        ctx.setTextBaseline(VPos.TOP);
-        // Bar Value 1
-        ctx.setFill(getForegroundColor());
-        ctx.fillRect(contentBounds.getX(), contentBounds.getY() + bkgBarPosY, contentBounds.getWidth(), bkgBarHeight);
-        ctx.setFill(getValue1Color());
-        ctx.fillRect(contentBounds.getX(), contentBounds.getY() + fgdBarPosY, contentBounds.getWidth() * value1Factor, fgdBarHeight);
-        ctx.setFill(getValue1TextColor());
-        ctx.setTextAlign(TextAlignment.LEFT);
-        ctx.setFont(valueUnitFont);
-        ctx.fillText(getNameValue1(), insetLeft, contentBounds.getY(), width * 0.5);
-        ctx.setTextAlign(TextAlignment.RIGHT);
-        ctx.setFont(valueUnitFont);
-        ctx.fillText(String.format(Locale.US, getFormatStringValue1(), getValue1()), width - insetRight, contentBounds.getY(), width * 0.5);
+        if (!compressed) {
+            // Standard view
+            ctx.setTextBaseline(VPos.TOP);
+            // Bar Value 1
+            ctx.setFill(getForegroundColor());
+            ctx.fillRect(contentBounds.getX(), contentBounds.getY() + bkgBarPosY, contentBounds.getWidth(), bkgBarHeight);
+            ctx.setFill(getValue1Color());
+            ctx.fillRect(contentBounds.getX(), contentBounds.getY() + fgdBarPosY, contentBounds.getWidth() * value1Factor, fgdBarHeight);
+            ctx.setFill(getValue1TextColor());
+            ctx.setTextAlign(TextAlignment.LEFT);
+            ctx.setFont(nameFont);
+            ctx.fillText(getNameValue1(), insetLeft, contentBounds.getY(), width * 0.5);
+            ctx.setTextAlign(TextAlignment.RIGHT);
+            ctx.setFont(valueUnitFont);
+            ctx.fillText(String.format(Locale.US, getFormatStringValue1(), getValue1()), width - insetRight, contentBounds.getY(), width * 0.5);
 
-        // Bar Value 2
-        ctx.setFill(getForegroundColor());
-        ctx.fillRect(contentBounds.getX(), contentBounds.getY() + areaHeight + spacer + bkgBarPosY, contentBounds.getWidth(), bkgBarHeight);
-        ctx.setFill(getValue2Color());
-        ctx.fillRect(contentBounds.getX(), contentBounds.getY() + areaHeight + spacer + fgdBarPosY, contentBounds.getWidth() * value2Factor, fgdBarHeight);
-        ctx.setFont(nameFont);
-        ctx.setFill(getValue2TextColor());
-        ctx.setTextAlign(TextAlignment.LEFT);
-        ctx.fillText(getNameValue2(), insetLeft, contentBounds.getY() + areaHeight + spacer, width * 0.5);
-        ctx.setTextAlign(TextAlignment.RIGHT);
-        ctx.setFont(valueUnitFont);
-        ctx.fillText(String.format(Locale.US, getFormatStringValue2(), getValue2()), width - insetRight, contentBounds.getY() + areaHeight + spacer);
+            // Bar Value 2
+            ctx.setFill(getForegroundColor());
+            ctx.fillRect(contentBounds.getX(), contentBounds.getY() + areaHeight + spacer + bkgBarPosY, contentBounds.getWidth(), bkgBarHeight);
+            ctx.setFill(getValue2Color());
+            ctx.fillRect(contentBounds.getX(), contentBounds.getY() + areaHeight + spacer + fgdBarPosY, contentBounds.getWidth() * value2Factor, fgdBarHeight);
+            ctx.setFill(getValue2TextColor());
+            ctx.setTextAlign(TextAlignment.LEFT);
+            ctx.setFont(nameFont);
+            ctx.fillText(getNameValue2(), insetLeft, contentBounds.getY() + areaHeight + spacer, width * 0.5);
+            ctx.setTextAlign(TextAlignment.RIGHT);
+            ctx.setFont(valueUnitFont);
+            ctx.fillText(String.format(Locale.US, getFormatStringValue2(), getValue2()), width - insetRight, contentBounds.getY() + areaHeight + spacer);
 
-        // Bar Value 3
-        ctx.setFill(getForegroundColor());
-        ctx.fillRect(contentBounds.getX(), contentBounds.getY() + areaHeight + spacer + areaHeight + spacer + bkgBarPosY, contentBounds.getWidth(), bkgBarHeight);
-        ctx.setFill(getValue3Color());
-        ctx.fillRect(contentBounds.getX(), contentBounds.getY() + areaHeight + spacer + areaHeight + spacer + fgdBarPosY, contentBounds.getWidth() * value3Factor, fgdBarHeight);
-        ctx.setFont(nameFont);
-        ctx.setFill(getValue3TextColor());
-        ctx.setTextAlign(TextAlignment.LEFT);
-        ctx.fillText(getNameValue3(), insetLeft, contentBounds.getY() + areaHeight + spacer + areaHeight + spacer);
-        ctx.setTextAlign(TextAlignment.RIGHT);
-        ctx.setFont(valueUnitFont);
-        ctx.fillText(String.format(Locale.US, getFormatStringValue3(), getValue3()), width - insetRight, contentBounds.getY() + areaHeight + spacer + areaHeight + spacer);
+            // Bar Value 3
+            ctx.setFill(getForegroundColor());
+            ctx.fillRect(contentBounds.getX(), contentBounds.getY() + areaHeight + spacer + areaHeight + spacer + bkgBarPosY, contentBounds.getWidth(), bkgBarHeight);
+            ctx.setFill(getValue3Color());
+            ctx.fillRect(contentBounds.getX(), contentBounds.getY() + areaHeight + spacer + areaHeight + spacer + fgdBarPosY, contentBounds.getWidth() * value3Factor, fgdBarHeight);
+            ctx.setFill(getValue3TextColor());
+            ctx.setTextAlign(TextAlignment.LEFT);
+            ctx.setFont(nameFont);
+            ctx.fillText(getNameValue3(), insetLeft, contentBounds.getY() + areaHeight + spacer + areaHeight + spacer);
+            ctx.setTextAlign(TextAlignment.RIGHT);
+            ctx.setFont(valueUnitFont);
+            ctx.fillText(String.format(Locale.US, getFormatStringValue3(), getValue3()), width - insetRight, contentBounds.getY() + areaHeight + spacer + areaHeight + spacer);
+        } else {
+            // Compressed view
+            ctx.setTextBaseline(VPos.CENTER);
+            // Bar Value 1
+            ctx.setFill(getForegroundColor());
+            ctx.fillRect(contentBounds.getX(), contentBounds.getY() + bkgBarPosY, contentBounds.getWidth(), bkgBarHeight);
+            ctx.setFill(getValue1Color());
+            ctx.fillRect(contentBounds.getX(), contentBounds.getY() + fgdBarPosY, contentBounds.getWidth() * value1Factor, fgdBarHeight);
+            ctx.setFill(getValue1TextColor());
+            ctx.setTextAlign(TextAlignment.LEFT);
+            ctx.setFont(nameFont);
+            ctx.fillText(getNameValue1(), insetLeft, contentBounds.getY() + areaHeight * 0.5, width * 0.5);
+            ctx.setTextAlign(TextAlignment.RIGHT);
+            ctx.setFont(valueUnitFont);
+            ctx.fillText(String.format(Locale.US, getFormatStringValue1(), getValue1()), width - insetRight, contentBounds.getY() + areaHeight * 0.5, width * 0.5);
+
+            // Bar Value 2
+            ctx.setFill(getForegroundColor());
+            ctx.fillRect(contentBounds.getX(), contentBounds.getY() + areaHeight + spacer + bkgBarPosY, contentBounds.getWidth(), bkgBarHeight);
+            ctx.setFill(getValue2Color());
+            ctx.fillRect(contentBounds.getX(), contentBounds.getY() + areaHeight + spacer + fgdBarPosY, contentBounds.getWidth() * value2Factor, fgdBarHeight);
+            ctx.setFill(getValue2TextColor());
+            ctx.setTextAlign(TextAlignment.LEFT);
+            ctx.setFont(nameFont);
+            ctx.fillText(getNameValue2(), insetLeft, contentBounds.getY() + areaHeight + spacer + areaHeight * 0.5, width * 0.5);
+            ctx.setTextAlign(TextAlignment.RIGHT);
+            ctx.setFont(valueUnitFont);
+            ctx.fillText(String.format(Locale.US, getFormatStringValue2(), getValue2()), width - insetRight, contentBounds.getY() + areaHeight + spacer + areaHeight * 0.5);
+
+            // Bar Value 3
+            ctx.setFill(getForegroundColor());
+            ctx.fillRect(contentBounds.getX(), contentBounds.getY() + areaHeight + spacer + areaHeight + spacer + bkgBarPosY, contentBounds.getWidth(), bkgBarHeight);
+            ctx.setFill(getValue3Color());
+            ctx.fillRect(contentBounds.getX(), contentBounds.getY() + areaHeight + spacer + areaHeight + spacer + fgdBarPosY, contentBounds.getWidth() * value3Factor, fgdBarHeight);
+            ctx.setFill(getValue3TextColor());
+            ctx.setTextAlign(TextAlignment.LEFT);
+            ctx.setFont(nameFont);
+            ctx.fillText(getNameValue3(), insetLeft, contentBounds.getY() + areaHeight + spacer + areaHeight + spacer + areaHeight * 0.5);
+            ctx.setTextAlign(TextAlignment.RIGHT);
+            ctx.setFont(valueUnitFont);
+            ctx.fillText(String.format(Locale.US, getFormatStringValue3(), getValue3()), width - insetRight, contentBounds.getY() + areaHeight + spacer + areaHeight + spacer + areaHeight * 0.5);
+        }
     }
 }
