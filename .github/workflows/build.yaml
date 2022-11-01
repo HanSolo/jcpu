@@ -16,11 +16,10 @@ jobs:
           architecture: x64
       - name: Build with Gradle
         run: .\gradlew.bat
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Jcpu Windows x64
-          path: '.\build\libs\jcpu-17.0.0.jar'
-
+          path: build/libs
 
 
   build-mac:
@@ -38,11 +37,10 @@ jobs:
         run: chmod +x gradlew
       - name: Build with Gradle
         run: ./gradlew build
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
-          name: Jcpu Mac x64
-          path: |
-            ./build/libs/jcpu-17.0.0.jar
+          name: Jcpu macos x64
+          path: build/libs
 
   build-linux:
 
@@ -59,8 +57,7 @@ jobs:
         run: chmod +x gradlew
       - name: Build with Gradle
         run: ./gradlew build
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Jcpu Linux x64
-          path: |            
-            ./build/libs/jcpu-17.0.0.jar
+          path: build/libs
