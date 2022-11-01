@@ -19,7 +19,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: Jcpu Windows x64
-          path: build\libs
+          path: \build\libs
 
 
   build-mac:
